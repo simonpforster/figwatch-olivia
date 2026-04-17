@@ -30,8 +30,6 @@ services:
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     restart: unless-stopped
-    group_add:
-      - "568"
     volumes:
       - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
     ports:
@@ -41,8 +39,6 @@ services:
   prometheus:
     image: prom/prometheus:latest
     restart: unless-stopped
-    group_add:
-      - "568"
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
