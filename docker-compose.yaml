@@ -1,0 +1,30 @@
+services:
+  figwatch:
+    image: ghcr.io/simonpforster/figwatch:pr-3
+    restart: unless-stopped
+    environment:
+      - FIGMA_PAT=${FIGMA_PAT}
+      - FIGWATCH_WEBHOOK_PASSCODE=${FIGWATCH_WEBHOOK_PASSCODE}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - FIGWATCH_TEAM_ID=${FIGWATCH_TEAM_ID}
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8080/health
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+      start_interval: 5s
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+networks: {}
+x-dockge:
+  urls: []
+
