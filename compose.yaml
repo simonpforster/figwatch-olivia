@@ -30,8 +30,9 @@ services:
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     restart: unless-stopped
-    volumes:
-      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+    configs:
+      - source: otel-config
+        target: /etc/otelcol-contrib/config.yaml
     ports:
       - "4317:4317"
       - "4318:4318"
@@ -39,8 +40,10 @@ services:
   prometheus:
     image: prom/prometheus:latest
     restart: unless-stopped
+    configs:
+      - source: prometheus-config
+        target: /etc/prometheus/prometheus.yml
     volumes:
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
@@ -55,6 +58,12 @@ services:
       - grafana-data:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+
+configs:
+  otel-config:
+    file: ./otel-collector-config.yaml
+  prometheus-config:
+    file: ./prometheus.yaml
 
 networks:
   default:
