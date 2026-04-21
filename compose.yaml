@@ -1,6 +1,6 @@
 services:
   figwatch:
-    image: ghcr.io/simonpforster/figwatch:pr-45
+    image: ghcr.io/simonpforster/figwatch:pr-46
     restart: unless-stopped
     environment:
       - FIGMA_PAT=${FIGMA_PAT}
