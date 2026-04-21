@@ -10,13 +10,11 @@ distributor:
         grpc:
           endpoint: 0.0.0.0:4317
 
-compactor:
-  compaction:
-    block_retention: 720h
-
 storage:
   trace:
     backend: local
+    block:
+      block_retention: 720h
     local:
       path: /var/tempo/traces
     wal:
