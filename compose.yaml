@@ -37,7 +37,7 @@ services:
       - "4318"
 
   tempo:
-    image: grafana/tempo:latest
+    image: grafana/tempo:2.10.0
     restart: unless-stopped
     volumes:
       - ./tempo.yaml:/etc/tempo/config.yaml:ro
