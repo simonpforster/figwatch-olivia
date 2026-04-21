@@ -1,6 +1,6 @@
 services:
   figwatch:
-    image: ghcr.io/simonpforster/figwatch:pr-44
+    image: ghcr.io/simonpforster/figwatch:pr-45
     restart: unless-stopped
     environment:
       - FIGMA_PAT=${FIGMA_PAT}
@@ -36,6 +36,15 @@ services:
       - "4317"
       - "4318"
 
+  tempo:
+    image: grafana/tempo:latest
+    restart: unless-stopped
+    volumes:
+      - ./tempo.yaml:/etc/tempo/config.yaml:ro
+      - tempo-data:/var/tempo
+    command:
+      - -config.file=/etc/tempo/config.yaml
+
   prometheus:
     image: prom/prometheus:latest
     restart: unless-stopped
@@ -45,6 +54,7 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.retention.time=30d
+      - --web.enable-remote-write-receiver
 
   grafana:
     image: grafana/grafana:latest
@@ -63,3 +73,4 @@ networks:
 volumes:
   prometheus-data:
   grafana-data:
+  tempo-data:
