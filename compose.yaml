@@ -1,12 +1,13 @@
 services:
   figwatch:
-    image: ghcr.io/ojboon/figwatch:pr-16
+    image: ghcr.io/ojboon/figwatch:pr-17
     restart: unless-stopped
     environment:
       - FIGMA_PAT=${FIGMA_PAT}
       - FIGWATCH_WEBHOOK_PASSCODE=${FIGWATCH_WEBHOOK_PASSCODE}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - FIGWATCH_TEAM_ID=${FIGWATCH_TEAM_ID}
+      - DATABASE_URL=${DATABASE_URL}
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
     healthcheck:
       test:
@@ -55,6 +56,24 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.retention.time=30d
       - --web.enable-remote-write-receiver
+
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-figwatch}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB:-figwatch}
+    volumes:
+      - /mnt/storage/projects/figwatch-olivia/pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U ${POSTGRES_USER:-figwatch}
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   grafana:
     image: grafana/grafana:latest
